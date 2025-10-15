@@ -47,6 +47,20 @@
         .profile-avatar{width:10rem;height:10rem}
       }
 
+      /* On small screens move theme buttons under the sticky header to avoid
+         overlapping the mobile menu button and reduce button size */
+      @media (max-width:768px){
+        .profile-theme-wrap{
+          top:72px; /* header ~56px + 16px spacing */
+          right:12px;
+          gap:6px;
+        }
+        .profile-theme-btn{
+          padding:6px 8px;
+          font-size:13px;
+        }
+      }
+
       /* Make prominent text readable in dark mode */
       [data-theme="dark"] h1.text-4xl,
       [data-theme="dark"] h3.text-2xl,
@@ -91,6 +105,26 @@
       [data-theme="dark"] header ul li a,
       [data-theme="dark"] header .text-blue-600{
         color: #ffffff !important; /* white in dark theme */
+      }
+
+      /* Mobile nav dropdown behaviour */
+      /* On small screens make the nav list a dropdown under the header when visible */
+      @media (max-width: 768px) {
+        header nav ul {
+          position: absolute;
+          top: 56px; /* below header */
+          right: 0;
+          left: 0;
+          background: var(--bg);
+          padding: 0.75rem 1rem;
+          box-shadow: 0 8px 24px rgba(2,6,23,0.08);
+          border-bottom-left-radius: 12px;
+          border-bottom-right-radius: 12px;
+          display: none; /* hidden by default on small screens */
+        }
+        header nav ul.mobile-nav-visible {
+          display: block !important;
+        }
       }
 
       /* Profile card adjustments */
@@ -139,7 +173,7 @@
           <li><a href="#about" class="hover:text-blue-600">About</a></li>
           <li><a href="#contact" class="hover:text-blue-600">Contact</a></li>
         </ul>
-  <button id="nav-toggle" class="md:hidden text-blue-600">Menu</button>
+  <button id="nav-toggle" type="button" aria-controls="navList" aria-expanded="false" class="md:hidden text-blue-600">Menu</button>
       </nav>
     </header>
 
@@ -530,19 +564,36 @@
       })();
     </script>
     <script>
-      // Mobile nav toggle
+      // Robust mobile nav toggle with ARIA support
       (function(){
         const toggle = document.getElementById('nav-toggle');
         const navList = document.getElementById('navList');
-        if(toggle && navList){
-          toggle.addEventListener('click', function(){
-            if(navList.classList.contains('hidden')){
-              navList.classList.remove('hidden');
-            } else {
-              navList.classList.add('hidden');
-            }
-          });
+        if(!toggle || !navList) return;
+
+        function setExpanded(val){
+          toggle.setAttribute('aria-expanded', String(val));
+          if(val){
+            navList.classList.add('mobile-nav-visible');
+          } else {
+            navList.classList.remove('mobile-nav-visible');
+          }
         }
+
+        // Initialize based on current state
+        setExpanded(false);
+
+        toggle.addEventListener('click', function(e){
+          const expanded = toggle.getAttribute('aria-expanded') === 'true';
+          setExpanded(!expanded);
+        });
+
+        // Close the nav if clicking outside on small screens
+        document.addEventListener('click', function(e){
+          if(window.innerWidth > 768) return; // only for mobile
+          if(!navList.contains(e.target) && !toggle.contains(e.target)){
+            setExpanded(false);
+          }
+        });
       })();
     </script>
   </body>
