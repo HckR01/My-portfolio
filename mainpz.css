@@ -1,0 +1,215 @@
+:root {
+  --bg: #f0f2f5;
+  --card: #ffffff;
+  --text: #1f2937; /* gray-800 */
+  --muted: #6b7280; /* gray-500 */
+  --accent: #4f46e5; /* indigo-600 */
+}
+
+[data-theme="dark"] {
+  --bg: #0b1220; /* deep dark */
+  --card: #0f1724; /* card dark */
+  --text: #e6eef8; /* light text */
+  --muted: #9aa6bf; /* muted light */
+  --accent: #7c3aed; /* indigo-500 for dark */
+}
+
+/* Basic resets and body theme-aware styles */
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial;
+}
+
+/* Card styles used by the index page */
+.link-card {
+  background: var(--card);
+  color: var(--text);
+}
+.profile-image-container img {
+  border-color: var(--card);
+}
+.online-indicator {
+  border-color: var(--card);
+}
+
+/* Top-right theme buttons container */
+.theme-toggle-wrap {
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 9999;
+}
+.theme-btn {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: transparent;
+  color: var(--text);
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.theme-btn:focus {
+  outline: 2px solid rgba(79, 70, 229, 0.25);
+}
+.theme-btn--active {
+  background: var(--accent);
+  color: white;
+  border-color: transparent;
+}
+
+/* Utility to ensure the main centered container looks good on dark */
+.max-w-md {
+  background: transparent;
+}
+
+/* Small responsive tweak so buttons don't overlap on tiny screens */
+@media (max-width: 420px) {
+  .theme-toggle-wrap {
+    right: 8px;
+    top: 8px;
+    gap: 6px;
+  }
+  .theme-btn {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+}
+
+/* Index page responsive tweaks */
+@media (max-width: 640px) {
+  .profile-image-container {
+    width: 96px;
+    height: 96px;
+  }
+  .profile-image-container img {
+    width: 96px;
+    height: 96px;
+  }
+  .w-full.max-w-md {
+    padding: 1rem;
+  }
+  .link-card {
+    flex-direction: row;
+    align-items: center;
+  }
+  .link-card i.fas,
+  .link-card i.fab {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-image-container {
+    width: 80px;
+    height: 80px;
+  }
+  .profile-image-container img {
+    width: 80px;
+    height: 80px;
+  }
+  .w-full.max-w-md {
+    padding: 0.75rem;
+  }
+  /* Make each link-card a little taller and easier to tap */
+  .link-card {
+    padding: 0.75rem;
+  }
+}
+
+/* Stack link-cards on very small screens and increase spacing */
+@media (max-width: 360px) {
+  .link-card {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .link-card .ml-4 {
+    margin-left: 0.75rem;
+  }
+}
+
+/* Height-based layout adjustments to prevent overflow on short devices */
+@media (max-height: 800px) {
+  /* switch vertical centering to top so content isn't cut off */
+  body.flex {
+    align-items: flex-start;
+  }
+  body {
+    padding-top: 18px;
+  }
+  /* make main container scrollable if content exceeds viewport */
+  .w-full.max-w-md {
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+  /* slightly smaller avatar and fonts */
+  .profile-image-container {
+    width: 96px;
+    height: 96px;
+  }
+  .profile-image-container img {
+    width: 96px;
+    height: 96px;
+  }
+  h1.text-3xl {
+    font-size: 1.6rem;
+  }
+  .mt-8 {
+    margin-top: 1.25rem;
+  }
+}
+
+@media (max-height: 700px) {
+  body {
+    padding-top: 12px;
+  }
+  .profile-image-container {
+    width: 88px;
+    height: 88px;
+  }
+  .profile-image-container img {
+    width: 88px;
+    height: 88px;
+  }
+  h1.text-3xl {
+    font-size: 1.4rem;
+  }
+  .mt-8 {
+    margin-top: 1rem;
+  }
+  .link-card {
+    padding: 0.6rem;
+  }
+}
+
+@media (max-height: 600px) {
+  body {
+    padding-top: 8px;
+  }
+  .profile-image-container {
+    width: 72px;
+    height: 72px;
+  }
+  .profile-image-container img {
+    width: 72px;
+    height: 72px;
+  }
+  h1.text-3xl {
+    font-size: 1.15rem;
+  }
+  .mt-8 {
+    margin-top: 0.75rem;
+  }
+  .w-full.max-w-md {
+    padding: 0.5rem;
+  }
+}

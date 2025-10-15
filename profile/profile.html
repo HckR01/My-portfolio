@@ -10,9 +10,122 @@
     <!-- EmailJS for sending emails -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <link rel="stylesheet" href="/profile/profile.css" />
+  <style>
+      /* Theme variables and minimal dark-mode overrides for this page */
+      :root{
+        --bg: #ffffff;
+        --card: #ffffff;
+        --text: #0f1724; /* dark text */
+        --muted: #64748b;
+      }
+      [data-theme="dark"]{
+        --bg: #0b1220;
+        --card: #0f1724;
+        --text: #e6eef8;
+        --muted: #9aa6bf;
+      }
+
+      /* Apply variables to page; use !important to override Tailwind utilities if present */
+      html,body{height:100%}
+      body{background:var(--bg) !important;color:var(--text) !important}
+
+      /* Minimal styles for theme buttons on profile page */
+      .profile-theme-wrap{position:fixed;right:16px;top:16px;z-index:999;display:flex;gap:8px}
+      .profile-theme-btn{padding:8px 10px;border-radius:8px;background:transparent;border:1px solid rgba(0,0,0,0.08);cursor:pointer}
+      .profile-theme-btn--active{background:#4f46e5;color:#fff;border-color:transparent}
+
+      /* Responsive tweaks */
+      /* Hide decorative absolute elements on small screens to reduce clutter */
+      .decorative{display:block}
+      @media (max-width:768px){
+        .decorative{display:none !important}
+      }
+
+      /* Make avatar responsive */
+      .profile-avatar{width:8rem;height:8rem}
+      @media (min-width:768px){
+        .profile-avatar{width:10rem;height:10rem}
+      }
+
+      /* Make prominent text readable in dark mode */
+      [data-theme="dark"] h1.text-4xl,
+      [data-theme="dark"] h3.text-2xl,
+      [data-theme="dark"] .text-slate-900{
+        color:var(--text) !important;
+      }
+      [data-theme="dark"] .text-slate-600,
+      [data-theme="dark"] p.text-slate-600{
+        color:var(--muted) !important;
+      }
+      /* So cards don't stay bright white */
+      [data-theme="dark"] .bg-white,
+      [data-theme="dark"] .bg-white\/70,
+      [data-theme="dark"] .bg-slate-50{
+        background:var(--card) !important;
+      }
+      /* Contact section background (light gradient, dark theme uses card/bg) */
+      .contact-section{
+        background: linear-gradient(135deg,#f8fafc,#eef2ff) !important;
+      }
+      [data-theme="dark"] .contact-section{
+        background: linear-gradient(180deg,var(--bg), rgba(11,18,32,0.8)) !important;
+      }
+      /* Navbar and header adjustments */
+      [data-theme="dark"] header,
+      [data-theme="dark"] header nav{
+        background: rgba(15,23,36,0.6) !important;
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+        color: var(--text) !important;
+      }
+      [data-theme="dark"] header a.text-blue-600{
+        color: var(--text) !important;
+      }
+      /* Navbar link colors: light theme -> dark text; dark theme -> white */
+      header a,
+      header ul li a,
+      header .text-blue-600{
+        color: #0f1724 !important; /* dark in light theme */
+      }
+      [data-theme="dark"] header a,
+      [data-theme="dark"] header ul li a,
+      [data-theme="dark"] header .text-blue-600{
+        color: #ffffff !important; /* white in dark theme */
+      }
+
+      /* Profile card adjustments */
+      [data-theme="dark"] .profile-card{
+        background: linear-gradient(135deg, #0f1724 0%, #0b1220 100%) !important;
+        border-color: rgba(255,255,255,0.06) !important;
+        box-shadow: 0 10px 30px rgba(2,6,23,0.6) !important;
+      }
+      [data-theme="dark"] .profile-card h3,
+      [data-theme="dark"] .profile-card p,
+      [data-theme="dark"] .profile-card .text-slate-700{
+        color: var(--text) !important;
+      }
+
+      /* Contact form card */
+      [data-theme="dark"] .contact-form-card{
+        background: rgba(15,23,36,0.6) !important;
+        color: var(--text) !important;
+        box-shadow: 0 8px 24px rgba(2,6,23,0.6) !important;
+      }
+      [data-theme="dark"] .contact-form-card input,
+      [data-theme="dark"] .contact-form-card textarea{
+        background: rgba(255,255,255,0.03) !important;
+        color: var(--text) !important;
+        border-color: rgba(255,255,255,0.06) !important;
+      }
+    </style>
     <title>Saroj's Profile</title>
   </head>
   <body>
+    <!-- Profile page theme toggles -->
+    <div class="profile-theme-wrap">
+      <button id="profileLight" class="profile-theme-btn">Light</button>
+      <button id="profileDark" class="profile-theme-btn">Dark</button>
+    </div>
     <header class="bg-white/80 backdrop-blur sticky top-0 z-40">
       <nav
         class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between"
@@ -20,13 +133,13 @@
         <a href="/profile/profile.html" class="text-blue-600 font-bold text-xl"
           >Saroj Kumar Baral</a
         >
-        <ul class="hidden md:flex gap-6 text-sm text-slate-700">
+  <ul id="navList" class="hidden md:flex gap-6 text-sm text-slate-700">
           <li><a href="#home" class="hover:text-blue-600">Home</a></li>
           <li><a href="#projects" class="hover:text-blue-600">Projects</a></li>
           <li><a href="#about" class="hover:text-blue-600">About</a></li>
           <li><a href="#contact" class="hover:text-blue-600">Contact</a></li>
         </ul>
-        <button id="nav-toggle" class="md:hidden text-blue-600">Menu</button>
+  <button id="nav-toggle" class="md:hidden text-blue-600">Menu</button>
       </nav>
     </header>
 
@@ -36,22 +149,22 @@
         class="w-full px-6 py-16 relative overflow-hidden"
       >
         <!-- Floating stickers -->
-        <div class="absolute top-10 left-10 text-blue-400 opacity-30 text-6xl animate-bounce">
+        <div class="absolute top-10 left-10 text-blue-400 opacity-30 text-6xl animate-bounce decorative">
           <i class="fab fa-html5"></i>
         </div>
-        <div class="absolute top-20 right-20 text-green-400 opacity-30 text-5xl animate-pulse">
+        <div class="absolute top-20 right-20 text-green-400 opacity-30 text-5xl animate-pulse decorative">
           <i class="fab fa-css3-alt"></i>
         </div>
-        <div class="absolute bottom-20 left-20 text-yellow-400 opacity-30 text-7xl animate-spin">
+        <div class="absolute bottom-20 left-20 text-yellow-400 opacity-30 text-7xl animate-spin decorative">
           <i class="fab fa-js-square"></i>
         </div>
-        <div class="absolute bottom-10 right-10 text-purple-400 opacity-30 text-6xl animate-bounce">
+        <div class="absolute bottom-10 right-10 text-purple-400 opacity-30 text-6xl animate-bounce decorative">
           <i class="fab fa-react"></i>
         </div>
-        <div class="absolute top-1/2 left-1/4 text-pink-400 opacity-25 text-8xl">
+        <div class="absolute top-1/2 left-1/4 text-pink-400 opacity-25 text-8xl decorative">
           <i class="fas fa-code"></i>
         </div>
-        <div class="absolute top-1/3 right-1/3 text-indigo-400 opacity-25 text-7xl">
+        <div class="absolute top-1/3 right-1/3 text-indigo-400 opacity-25 text-7xl decorative">
           <i class="fas fa-laptop-code"></i>
         </div>
 
@@ -89,14 +202,14 @@
         <!-- Right: Profile card -->
         <div class="flex justify-center lg:justify-end">
           <div
-            class="w-full max-w-md bg-gradient-to-br from-white via-blue-50 to-indigo-100 rounded-3xl shadow-2xl p-8 border-4 border-gradient-to-r from-blue-400 to-purple-500 relative overflow-hidden"
+            class="w-full max-w-md bg-gradient-to-br from-white via-blue-50 to-indigo-100 rounded-3xl shadow-2xl p-8 border-4 border-gradient-to-r from-blue-400 to-purple-500 relative overflow-hidden profile-card"
           >
             <!-- Decorative elements -->
             <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-pink-400 to-red-400 rounded-full -translate-y-10 translate-x-10 opacity-20"></div>
             <div class="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-green-400 to-blue-400 rounded-full translate-y-8 -translate-x-8 opacity-20"></div>
 
             <!-- Profile avatar -->
-            <div class="profile-avatar w-40 h-40 rounded-full bg-gradient-to-tr from-blue-400 via-purple-500 to-pink-500 shadow-xl mx-auto mb-6 relative z-10">
+            <div class="profile-avatar rounded-full bg-gradient-to-tr from-blue-400 via-purple-500 to-pink-500 shadow-xl mx-auto mb-6 relative z-10">
               <img src="/main.png" alt="Saroj Kumar Baral" class="w-full h-full object-cover rounded-full border-4 border-white">
             </div>
             <h3 class="mt-4 text-2xl font-bold text-slate-900 text-center">
@@ -332,7 +445,7 @@
         </div>
       </section>
 
-      <section id="contact" class="w-full px-6 py-16 bg-gradient-to-br from-blue-50 to-slate-100" style="min-height: 50vh;">
+  <section id="contact" class="w-full px-6 py-16 bg-gradient-to-br from-blue-50 to-slate-100 contact-section" style="min-height: 50vh;">
         <div class="container">
           <a class="text-2xl font-bold text-slate-900 text-center">Contact</a>
           <p class="mt-3 text-slate-600 text-center">Get in touch with me or follow me on social media.</p>
@@ -354,7 +467,7 @@
           </div>
 
           <!-- Contact Form -->
-          <div class="mt-12 max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-8">
+          <div class="mt-12 max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-8 contact-form-card">
             <form id="contact-form" class="space-y-6">
               <div class="relative">
                 <label for="name" class="block text-sm font-medium text-slate-700">Name</label>
@@ -394,5 +507,43 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
     <!-- Page scripts -->
     <script src="/profile/profile.js"></script>
+    <script>
+      (function(){
+        const root = document.documentElement;
+        const lightBtn = document.getElementById('profileLight');
+        const darkBtn = document.getElementById('profileDark');
+        function applyTheme(name){
+          if(name === 'dark'){
+            root.setAttribute('data-theme','dark');
+            darkBtn.classList.add('profile-theme-btn--active');
+            lightBtn.classList.remove('profile-theme-btn--active');
+          } else {
+            root.removeAttribute('data-theme');
+            lightBtn.classList.add('profile-theme-btn--active');
+            darkBtn.classList.remove('profile-theme-btn--active');
+          }
+        }
+        const saved = localStorage.getItem('site-theme');
+        if(saved === 'dark') applyTheme('dark'); else applyTheme('light');
+        lightBtn.addEventListener('click', function(){ applyTheme('light'); localStorage.setItem('site-theme','light');});
+        darkBtn.addEventListener('click', function(){ applyTheme('dark'); localStorage.setItem('site-theme','dark');});
+      })();
+    </script>
+    <script>
+      // Mobile nav toggle
+      (function(){
+        const toggle = document.getElementById('nav-toggle');
+        const navList = document.getElementById('navList');
+        if(toggle && navList){
+          toggle.addEventListener('click', function(){
+            if(navList.classList.contains('hidden')){
+              navList.classList.remove('hidden');
+            } else {
+              navList.classList.add('hidden');
+            }
+          });
+        }
+      })();
+    </script>
   </body>
 </html>
