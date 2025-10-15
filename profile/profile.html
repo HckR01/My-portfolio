@@ -502,18 +502,20 @@
 
           <!-- Contact Form -->
           <div class="mt-12 max-w-lg mx-auto bg-white rounded-2xl shadow-lg p-8 contact-form-card">
-            <form id="contact-form" class="space-y-6">
+            <!-- Set data-service-id to your EmailJS service id (default provided),
+                 data-template-id to your EmailJS template id, and data-public-key to your EmailJS public key -->
+            <form id="contact-form" class="space-y-6" data-service-id="service_w8vqpan" data-template-id="template_nf7q12e" data-public-key="yPQliQlsRfujzvopM">
               <div class="relative">
                 <label for="name" class="block text-sm font-medium text-slate-700">Name</label>
                 <div class="mt-1 relative">
-                  <input type="text" id="name" name="name" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                  <input type="text" id="name" name="name" value="saroj" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                   <i class="fas fa-user absolute left-3 top-3 text-slate-400"></i>
                 </div>
               </div>
               <div class="relative">
                 <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
                 <div class="mt-1 relative">
-                  <input type="email" id="email" name="email" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                  <input type="email" id="email" name="email" value="sarojkumarbaral6338@gmail.com" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                   <i class="fas fa-envelope absolute left-3 top-3 text-slate-400"></i>
                 </div>
               </div>
@@ -529,6 +531,9 @@
                   <i class="fas fa-paper-plane mr-2"></i> Send Message
                 </button>
               </div>
+              <!-- Hidden fields to match EmailJS template variable names -->
+              <input type="hidden" name="user_name" id="hidden_user_name" />
+              <input type="hidden" name="user_email" id="hidden_user_email" />
             </form>
           </div>
         </div>

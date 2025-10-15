@@ -135,22 +135,66 @@ if (typeof gsap === "undefined") {
 (function () {
   const form = document.getElementById("contact-form");
   if (!form) return;
+  // Read EmailJS configuration from form data-attributes with sensible defaults
+  const cfg = {
+    service: form.dataset.serviceId || "service_w8vqpan",
+    template: form.dataset.templateId || "",
+    publicKey: form.dataset.publicKey || "",
+  };
+
+  // Initialize emailjs if public key is provided
+  if (
+    cfg.publicKey &&
+    typeof emailjs !== "undefined" &&
+    typeof emailjs.init === "function"
+  ) {
+    try {
+      emailjs.init(cfg.publicKey);
+    } catch (err) {
+      console.warn("EmailJS init failed", err);
+    }
+  }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    // Replace with your EmailJS service ID, template ID, and public key
-    const serviceID = "your_service_id";
-    const templateID = "your_template_id";
-    const publicKey = "your_public_key";
+    if (typeof emailjs === "undefined") {
+      alert(
+        "EmailJS is not loaded. Please check your network or include the EmailJS SDK."
+      );
+      return;
+    }
 
-    emailjs.sendForm(serviceID, templateID, form, publicKey).then(
+    if (!cfg.template) {
+      alert(
+        "Email template ID is not configured. Please set data-template-id on the contact form."
+      );
+      return;
+    }
+
+    // Ensure hidden fields match visible inputs (EmailJS template variables)
+    try {
+      const visibleName = document.getElementById("name")?.value || "";
+      const visibleEmail = document.getElementById("email")?.value || "";
+      const hiddenName = document.getElementById("hidden_user_name");
+      const hiddenEmail = document.getElementById("hidden_user_email");
+      if (hiddenName) hiddenName.value = visibleName;
+      if (hiddenEmail) hiddenEmail.value = visibleEmail;
+    } catch (ex) {
+      console.warn("Failed to copy visible fields to hidden inputs", ex);
+    }
+
+    // Use sendForm which expects (serviceID, templateID, form)
+    emailjs.sendForm(cfg.service, cfg.template, form).then(
       () => {
         alert("Message sent successfully!");
         form.reset();
       },
       (error) => {
-        alert("Error sending message: " + error.text);
+        console.error("EmailJS error", error);
+        alert(
+          "Error sending message: " + (error?.text || JSON.stringify(error))
+        );
       }
     );
   });
