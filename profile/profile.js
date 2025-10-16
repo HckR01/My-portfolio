@@ -64,18 +64,23 @@ if (typeof gsap === "undefined") {
   });
 })();
 
-// Stagger reveal for project cards
+// Stagger reveal for project cards — slower and smoother
 (function () {
   const grid = document.querySelector("#projects .grid");
   if (!grid) return;
   const cards = grid.querySelectorAll(".project-card");
   gsap.from(cards, {
     opacity: 0,
-    y: 50,
-    stagger: 0.2,
-    duration: 1.0,
-    ease: "power3.out",
-    scrollTrigger: { trigger: "#projects", start: "top 85%" },
+    y: 40, // slightly smaller translate for a subtler effect
+    stagger: 0.32, // wider stagger so cards appear more rhythmically
+    duration: 1.4, // slower reveal
+    ease: "power2.out", // gentler easing for smoothness
+    scrollTrigger: {
+      trigger: "#projects",
+      start: "top 85%",
+      // play once when entering - if you want repeat on reverse, remove this
+      toggleActions: "play none none reverse",
+    },
   });
 })();
 
